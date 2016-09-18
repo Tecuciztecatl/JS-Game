@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" name="viewport" content="width=device-width, user-scalable=no, height=device-height">
+	<title>Gamey</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+		html, body {
+			background-color: black;
+			overflow: hidden;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+			margin: auto;
+			display: block;
+			background-color: white;
+			overflow: hidden;
+		}
+		@media (orientation: portrait) {
+			#paused {
+				width: 100%;
+				height: 100%;
+				visibility: visible;
+				background-color: gray;
+				display: inline-block;
+				position: absolute;
+			    font-family: 'Press Start 2P', cursive;
+			    -webkit-font-smoothing: antialiased;
+			}
+		}
+		@media (orientation: landscape) {
+			#paused { display: none; }
+		}
+		.fa {
+		    font-size: 10em;
+		    -webkit-animation: rotatePortrait 2s steps(5, end) 0s infinite;
+		    animation: rotatePortrait 2s steps(5, end) 0s infinite;
+		    margin-bottom: 25px;
+		}
+
+		@keyframes rotatePortrait {
+		  0% {
+		    transform: none;
+		  }
+		  60% {
+		    transform: none;
+		  }
+		  100% {
+		    transform: rotate(90deg);
+		  }
+		}
+	</style>
+</head>
+<body>
+<div id="paused" class="paused">
+	<div style="text-align:center; margin: auto;">
+		<i class="fa fa-mobile"></i><br>
+		Game Paused!
+	</div>
+</div>
+	<canvas id="Gamey" tabindex="0">
+		something something
+	</canvas>
+	<script type="text/javascript" src="js/Screens.js"></script>
+	<script type="text/javascript" src="js/Game.js"></script>
+	<!--script type="text/javascript" src="js/test.js"></script>
+	<script type="text/javascript" src="js/OrientationHandler.js"></script>
+	<script type="text/javascript" src="js/KeyboardEvents.js"></script>
+	<script type="text/javascript" src="js/MouseEvents.js"></script>
+	<script type="text/javascript" src="js/TouchEvents.js"></script-->
+</body>
+</html>
