@@ -9,12 +9,25 @@ var MODULE = (function (myApp) {
 				myApp.canvas.width  = myApp.GAME_WIDTH;
 				myApp.canvas.height = myApp.GAME_HEIGHT;
 
+		myApp.DIRECTION_LEFT = 1;
+		myApp.DIRECTION_UP = 2;
+		myApp.DIRECTION_RIGHT = 3;
+		myApp.DIRECTION_DOWN = 4;
+		myApp.NOT_MOVING = 5;
+
 				console.log(myApp.canvas.width);
 				console.log(myApp.canvas.height);
 				
 				myApp.gameLive = true;
+				myApp.pause = function () {
+					myApp.gameLive = false;
+				}
+				myApp.resume = function () {
+					myApp.gameLive = true;
+				}
 				myApp.currentScreen = 'game';
 				myApp.inputInteractions = new Array();
+				myApp.canceledInputInteractions = new Array();
 
 				myApp.screens = {};
 				myApp.screens.game = new myApp.GameScreen(myApp.GAME_HEIGHT, myApp.GAME_WIDTH);
@@ -23,11 +36,12 @@ var MODULE = (function (myApp) {
 				name: 'game',
 				active: false,
 				update: function() {
-					myApp.screens['game'].update(myApp.GAME_HEIGHT, myApp.GAME_HEIGHT);
+					//handleButtons();
+					myApp.screens[myApp.currentScreen].update(myApp.GAME_HEIGHT, myApp.GAME_HEIGHT);
 				},
 				draw: function() {
 					//clear the whole canvas!
-					myApp.screens['game'].draw(context, myApp.GAME_HEIGHT, myApp.GAME_WIDTH);
+					myApp.screens[myApp.currentScreen].draw(context, myApp.GAME_HEIGHT, myApp.GAME_WIDTH);
 				},
 
 			};
@@ -62,23 +76,52 @@ var MODULE = (function (myApp) {
 
 
 		myApp.checkInputCollisionWithButtons = function (input) {
+			for( var button in myApp.screens[myApp.currentScreen].buttons){
+				//console.log ("button: " + JSON.stringify(myApp.screens[myApp.currentScreen].buttons[button]));
+				if (myApp.checkCollision(myApp.screens[myApp.currentScreen].buttons[button], input)) {
+					myApp.screens[myApp.currentScreen].buttons[button].press();
+					input.pressed = myApp.screens[myApp.currentScreen].buttons[button].name;
+					input.isPressing = true;
 
-			for( var button in myApp.screen[myApp.currentScreen]){
-				if (myApp.checkCollision(myApp.screen[myApp.currentScreen].buttons[button], input)) {
-					myApp.screen[myApp.currentScreen].buttons[button].press();
-					input.pressing = myApp.screen[myApp.currentScreen].buttons[button].name;
+					//console.log("button: " +  myApp.screens[myApp.currentScreen].buttons[button].x + ", " + myApp.screens[myApp.currentScreen].buttons[button].y);
+					//console.log("input: " + input.x + ", " + input.y);
+					//console.log("move da player in " + myApp.screens[myApp.currentScreen].buttons[button].name);
 
-					console.log("button: " +  myApp.screen[myApp.currentScreen].buttons[button].x + ", " + myApp.screen[myApp.currentScreen].buttons[button].y);
-					console.log("input: " + input.x + ", " + input.y);
-					console.log("move da player in " + myApp.screen[myApp.currentScreen].buttons[button].name);
-
-					return true;
-				}
-				else {
-					return false
+					return input;
 				}
 			}
-			return false;
+			input.pressed = null;
+			input.isPressing = false;
+			return input;
+		}
+
+		myApp.handleInput = function() {
+			for (var i = 0; i < myApp.inputInteractions.length; i++) {
+				console.log("II " + JSON.stringify(myApp.inputInteractions[i]));
+				if (myApp.inputInteractions[i].isPressing) {
+					if (!myApp.checkCollision(myApp.inputInteractions[i], myApp.screens[myApp.currentScreen].buttons[myApp.inputInteractions[i].pressed])) {
+						myApp.screens[myApp.currentScreen].buttons[myApp.inputInteractions[i].pressed].release();
+						myApp.inputInteractions[i].isPressing = false;
+						myApp.inputInteractions[i].pressed = null;
+					}
+				}
+				else {
+					myApp.inputInteractions[i] = myApp.checkInputCollisionWithButtons(myApp.inputInteractions[i]);
+					if (myApp.inputInteractions[i].isPressing) {
+						myApp.screens[myApp.currentScreen].buttons[myApp.inputInteractions[i].pressed].press();
+					}
+
+				}
+			}
+			// handle canceledInputInteractions
+			for (var i = 0; i < myApp.canceledInputInteractions.length; i++) {
+				console.log("II " + JSON.stringify(myApp.canceledInputInteractions[i]));
+				if (myApp.canceledInputInteractions[i].isPressing) {
+					myApp.screens[myApp.currentScreen].buttons[myApp.canceledInputInteractions[i].pressed].release();
+					myApp.screens[myApp.currentScreen].buttons[myApp.canceledInputInteractions[i].pressed].doOnRelease();
+						myApp.canceledInputInteractions.splice(i, 1);
+				}
+			}
 		}
 
 		game.step();

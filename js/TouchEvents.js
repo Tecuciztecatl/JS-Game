@@ -4,30 +4,31 @@ var MODULE = (function (myApp) {
 	myApp.canvas.addEventListener("touchcancel", cancelTouch, false);
 	myApp.canvas.addEventListener("touchmove", moveTouch, false);
 
-	var ongoingTouches = new Array();
+	//var ongoingTouches = new Array();
 
 
 
 	function startTouch(event) {
-		//console.log (arg);
-		//console.log (arg.touches);
 		console.log (event.touches[0]);
 		//console.log (arg.touches[0].screenX);
 
 		 event.preventDefault();
 		  //console.log("touchstart.");
-		  var ctx = myApp.canvas.getContext("2d");
 		  var touches = event.changedTouches;
 		  //console.log(touches);
 		        
 		  for (var i = 0; i < touches.length; i++) {
 		    console.log("touchstart:" + i + "...");
 
-			var touch = checkTouchCollisionWithArrows(copyTouch(touches[i]));
-		    ongoingTouches.push(touch);
+				//var touch = checkTouchCollisionWithArrows(copyTouch(touches[i]));
+			    //ongoingTouches.push(touch);
+
+	    	var touch = copyTouch(touches[i]);
+		    myApp.inputInteractions.push(touch);
 		   	
 		   	console.log("touchstart:" + i + ".");
 		  }
+		  myApp.handleInput();
 
 		//myApp.movePlayer(event);
 	}
@@ -41,12 +42,15 @@ var MODULE = (function (myApp) {
 			var idx = ongoingTouchIndexById(touches[i].identifier);
 
 			if (idx >= 0) {
-				console.log("continuing touch "+idx +", dir: "+touches[i].direction);
+				console.log("continuing touch "+idx +", pressed: "+myApp.inputInteractions[idx].pressed);
 				//console.log("ctx.moveTo(" + ongoingTouches[idx].x + ", " + ongoingTouches[idx].y + ");");
 				//console.log("ctx.lineTo(" + touches[i].pageX + ", " + touches[i].pageY + ");");
 
-				var touch = checkTouchCollisionWithArrows(copyTouch(touches[i], ongoingTouches[idx].direction));
-				ongoingTouches.splice(idx, 1, touch);  // swap in the new touch record
+					//var touch = checkTouchCollisionWithArrows(copyTouch(touches[i], ongoingTouches[idx].direction));
+					//ongoingTouches.splice(idx, 1, touch);  // swap in the new touch record
+		    	var touch = copyTouch(touches[i], myApp.inputInteractions[idx].isPressing, myApp.inputInteractions[idx].pressed);
+		    	myApp.inputInteractions.splice(idx, 1, touch);
+		    	myApp.handleInput();
 				//console.log(".");
 			} else {
 				console.log("can't figure out which touch to continue");
@@ -56,15 +60,18 @@ var MODULE = (function (myApp) {
 
 	function endTouch(event) {
 		event.preventDefault();
-		//console.log("touchend");
+		console.log("touchend");
 		var touches = event.changedTouches;
 
 		for (var i = 0; i < touches.length; i++) {
 			var idx = ongoingTouchIndexById(touches[i].identifier);
 
 			if (idx >= 0) {
-				myApp.stopPlayer(ongoingTouches[idx].direction);
-				ongoingTouches.splice(idx, 1);  // remove it; we're done
+					//myApp.stopPlayer(ongoingTouches[idx].direction);
+					//ngoingTouches.splice(idx, 1);  // remove it; we're done
+				myApp.canceledInputInteractions.push(myApp.inputInteractions[idx]);
+		    	myApp.inputInteractions.splice(idx, 1);
+		    	myApp.handleInput();
 			} else {
 				console.log("can't figure out which touch to end");
 			}
@@ -73,27 +80,28 @@ var MODULE = (function (myApp) {
 
 	function cancelTouch(event) {
 		event.preventDefault();
-		//console.log("touchcancel.");
+		console.log("touchcancel.");
 		var touches = event.changedTouches;
 
 		for (var i = 0; i < touches.length; i++) {
-			myApp.stopPlayer(ongoingTouches[i].direction);
-			ongoingTouches.splice(i, 1);  // remove it; we're done
+				//myApp.stopPlayer(ongoingTouches[i].direction);
+				//ongoingTouches.splice(i, 1);  // remove it; we're done
+			myApp.canceledInputInteractions.push(myApp.inputInteractions[idx]);
+		    myApp.inputInteractions.splice(i, 1);
 		}
+		myApp.handleInput();
 	}
 
 	function copyTouch(touch) {
 		return { identifier: touch.identifier, x: touch.pageX, y: touch.pageY, w: touch.radiusX, h: touch.radiusY };
 	}
-
-
-	function copyTouch(touch, direction) {
-		return { identifier: touch.identifier, x: touch.pageX, y: touch.pageY, w: touch.radiusX, h: touch.radiusY, direction: direction };
+	function copyTouch(touch, isPressing, pressed) {
+		return { identifier: touch.identifier, x: touch.pageX, y: touch.pageY, w: touch.radiusX, h: touch.radiusY, isPressing: isPressing, pressed: pressed };
 	}
 
 	function ongoingTouchIndexById(idToFind) {
-		for (var i = 0; i < ongoingTouches.length; i++) {
-			var id = ongoingTouches[i].identifier;
+		for (var i = 0; i < myApp.inputInteractions.length; i++) {
+			var id = myApp.inputInteractions[i].identifier;
 
 			if (id == idToFind) {
 				return i;

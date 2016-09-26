@@ -72,6 +72,7 @@ var MODULE = (function (myApp) {
 
 		var movePlayer = function(direction) {
 			if (myApp.gameLive) {
+				//console.log(direction);
 				if (direction == myApp.DIRECTION_LEFT) {
 					if (player.x - player.speed >= 0)
 						player.x -= player.speed;
@@ -113,11 +114,13 @@ var MODULE = (function (myApp) {
 					buttons.right.isPressed = false;
 					this.isPressed = true;
 				},
-				released: function() {
+				release: function() {
 					this.isPressed = false;
 				},
 				doOnPress: function() {
 					movePlayer(this.direction);
+				},
+				doOnRelease: function() {
 				}
 			},
 			right: {
@@ -133,11 +136,13 @@ var MODULE = (function (myApp) {
 					buttons.left.isPressed = false;
 					this.isPressed = true;
 				},
-				released: function() {
+				release: function() {
 					this.isPressed = false;
 				},
 				doOnPress: function() {
 					movePlayer(this.direction);
+				},
+				doOnRelease: function() {
 				}
 			},
 			up: {
@@ -153,11 +158,13 @@ var MODULE = (function (myApp) {
 					buttons.down.isPressed = false;
 					this.isPressed = true;
 				},
-				released: function() {
+				release: function() {
 					this.isPressed = false;
 				},
 				doOnPress: function() {
 					movePlayer(this.direction);
+				},
+				doOnRelease: function() {
 				}
 			},
 			down: {
@@ -173,11 +180,13 @@ var MODULE = (function (myApp) {
 					buttons.up.isPressed = false;
 					this.isPressed = true;
 				},
-				released: function() {
+				release: function() {
 					this.isPressed = false;
 				},
 				doOnPress: function() {
 					movePlayer(this.direction);
+				},
+				doOnRelease: function() {
 				}
 			}
 		};
@@ -225,7 +234,7 @@ var MODULE = (function (myApp) {
 				  }
 				});
 			},
-			movePlayer: movePlayer(),
+			movePlayer: movePlayer,
 			update: function(height, width) {
 				if (myApp.gameLive) {
 					if (myApp.checkCollision(player, goal)) {
@@ -242,6 +251,7 @@ var MODULE = (function (myApp) {
 					//movePlayer(height, width);
 					for (var button in buttons) {
 						//if(myApp.checkCollision)
+						//console.log (buttons[button]);
 						if (buttons[button].isPressed)
 							buttons[button].doOnPress();
 					}
