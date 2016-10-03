@@ -15,6 +15,13 @@ var MODULE = (function (myApp) {
 		myApp.DIRECTION_DOWN = 4;
 		myApp.NOT_MOVING = 5;
 
+
+				myApp.LEFT = 'left';
+				myApp.UP = 'up';
+				myApp.RIGHT = 'right';
+				myApp.DOWN = 'down';
+				myApp.MENU = 'menu';
+
 				console.log(myApp.canvas.width);
 				console.log(myApp.canvas.height);
 				
@@ -122,6 +129,15 @@ var MODULE = (function (myApp) {
 						myApp.canceledInputInteractions.splice(i, 1);
 				}
 			}
+		}
+
+		myApp.press = function(button) {
+			myApp.screens[myApp.currentScreen].buttons[button].press();
+		}
+
+		myApp.release = function(button) {
+			myApp.screens[myApp.currentScreen].buttons[button].release();
+			myApp.screens[myApp.currentScreen].buttons[button].doOnRelease();
 		}
 
 		game.step();

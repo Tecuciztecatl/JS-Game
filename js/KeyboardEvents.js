@@ -10,23 +10,19 @@ var MODULE = (function (myApp) {
 		}
 		// LEFT ARROW
 		if ( arg.keyCode == 37 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.movePlayer(myApp.DIRECTION_LEFT);
+			myApp.press(myApp.LEFT);
 		}
 		// UP ARROW
 		else if ( arg.keyCode == 38 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.movePlayer(myApp.DIRECTION_UP);
+			myApp.press(myApp.UP);
 		}
 		// RIGHT ARROW
 		else if ( arg.keyCode == 39 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.movePlayer(myApp.DIRECTION_RIGHT);
+			myApp.press(myApp.RIGHT);
 		}
 		// DOWN ARROW
 		else if ( arg.keyCode == 40 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.movePlayer(myApp.DIRECTION_DOWN);
+			myApp.press(myApp.DOWN);
 		}
 	}
 
@@ -34,23 +30,19 @@ var MODULE = (function (myApp) {
 		console.log(arg);
 		// LEFT ARROW
 		if ( arg.keyCode == 37 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.stopPlayer(myApp.DIRECTION_LEFT);
+			myApp.release(myApp.LEFT);
 		}
 		// UP ARROW
 		else if ( arg.keyCode == 38 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.stopPlayer(myApp.DIRECTION_UP);
+			myApp.release(myApp.UP);
 		}
 		// RIGHT ARROW
 		else if ( arg.keyCode == 39 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.stopPlayer(myApp.DIRECTION_RIGHT);
+			myApp.release(myApp.RIGHT);
 		}
 		// DOWN ARROW
 		else if ( arg.keyCode == 40 ) {
-			//myApp.directionKeys[arg.keyCode] = arg.type == 'keydown';
-			myApp.stopPlayer(myApp.DIRECTION_DOWN);
+			myApp.release(myApp.DOWN);
 		}
 	}
 		

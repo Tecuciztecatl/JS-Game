@@ -20,14 +20,13 @@ var MODULE = (function (myApp) {
 		  for (var i = 0; i < touches.length; i++) {
 		    console.log("touchstart:" + i + "...");
 
-				//var touch = checkTouchCollisionWithArrows(copyTouch(touches[i]));
-			    //ongoingTouches.push(touch);
-
+		    // Put the touch event into the inputInteractions array so the app can handle it.
 	    	var touch = copyTouch(touches[i]);
 		    myApp.inputInteractions.push(touch);
 		   	
 		   	console.log("touchstart:" + i + ".");
 		  }
+		  // Handle input to update the touch interactions with the current screen.
 		  myApp.handleInput();
 
 		//myApp.movePlayer(event);
@@ -39,23 +38,22 @@ var MODULE = (function (myApp) {
 		var touches = event.changedTouches;
 
 		for (var i = 0; i < touches.length; i++) {
+			// Find the touch ID to modify.
 			var idx = ongoingTouchIndexById(touches[i].identifier);
 
 			if (idx >= 0) {
 				console.log("continuing touch "+idx +", pressed: "+myApp.inputInteractions[idx].pressed);
-				//console.log("ctx.moveTo(" + ongoingTouches[idx].x + ", " + ongoingTouches[idx].y + ");");
-				//console.log("ctx.lineTo(" + touches[i].pageX + ", " + touches[i].pageY + ");");
 
-					//var touch = checkTouchCollisionWithArrows(copyTouch(touches[i], ongoingTouches[idx].direction));
-					//ongoingTouches.splice(idx, 1, touch);  // swap in the new touch record
+			    // Put the touch event into the inputInteractions array so the app can handle it. Remove the previous one.
 		    	var touch = copyTouch(touches[i], myApp.inputInteractions[idx].isPressing, myApp.inputInteractions[idx].pressed);
 		    	myApp.inputInteractions.splice(idx, 1, touch);
-		    	myApp.handleInput();
 				//console.log(".");
 			} else {
 				console.log("can't figure out which touch to continue");
 			}
 		}
+		//Handle input to update the touch interactions wit the current screen.
+    	myApp.handleInput();
 	} 
 
 	function endTouch(event) {
@@ -67,15 +65,15 @@ var MODULE = (function (myApp) {
 			var idx = ongoingTouchIndexById(touches[i].identifier);
 
 			if (idx >= 0) {
-					//myApp.stopPlayer(ongoingTouches[idx].direction);
-					//ngoingTouches.splice(idx, 1);  // remove it; we're done
+			    // Put the touch event into the canceledInputInteractions array so the app can handle the cancelation. Remove the curent one.
 				myApp.canceledInputInteractions.push(myApp.inputInteractions[idx]);
 		    	myApp.inputInteractions.splice(idx, 1);
-		    	myApp.handleInput();
 			} else {
 				console.log("can't figure out which touch to end");
 			}
 		}
+		//Handle input to update the touch interactions wit the current screen.
+    	myApp.handleInput();
 	} 
 
 	function cancelTouch(event) {
@@ -84,11 +82,12 @@ var MODULE = (function (myApp) {
 		var touches = event.changedTouches;
 
 		for (var i = 0; i < touches.length; i++) {
-				//myApp.stopPlayer(ongoingTouches[i].direction);
-				//ongoingTouches.splice(i, 1);  // remove it; we're done
+			// Put the touch event into the canceledInputInteractions array so the app can handle the cancelation. Remove the curent one.
 			myApp.canceledInputInteractions.push(myApp.inputInteractions[idx]);
 		    myApp.inputInteractions.splice(i, 1);
 		}
+		//Handle input to update the touch interactions wit the current screen.
+
 		myApp.handleInput();
 	}
 
@@ -108,33 +107,6 @@ var MODULE = (function (myApp) {
 			}
 		}
 		return -1;    // not found
-	}
-
-
-	//Change arrow functionality to button-like functionality
-	//get rid of this hack function
-	function checkTouchCollisionWithArrows(touch) {
-		if (touch.direction >= 1 && touch.direction < 5) {
-			console.log ("direction defined " + touch.direction);
-		}
-		for( var arrow in myApp.arrows){
-			if (myApp.checkCollision(myApp.arrows[arrow], touch)) {
-				touch.direction =myApp.arrows[arrow].direction;
-			console.log("arrow: " +  myApp.arrows[arrow].x + ", " + myApp.arrows[arrow].y);
-			console.log("touch: " + touch.x + ", " + touch.y);
-				console.log("move da player in " + touch.direction);
-				console.log("move da player in " + myApp.arrows[arrow].direction);
-				myApp.movePlayer(touch.direction);
-				break;
-			}
-			else {
-				console.log("STOP "  + touch.direction);
-				myApp.stopPlayer(touch.direction);
-				console.log("set not moving");
-				touch.direction = myApp.NOT_MOVING;
-			}
-		}
-		return touch;
 	}
 
 	return myApp;
